@@ -1,0 +1,55 @@
+# Ignore Python compiled files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore environment files
+.env
+venv/
+env/
+ENV/
+.venv/
+.ipynb_checkpoints/
+jub
+.devcontainer
+
+# Ignore Jupyter notebook checkpoints and outputs
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Ignore Colab temporary files
+*.colab
+
+# Ignore model checkpoints and logs
+checkpoints/
+logs/
+*.h5
+*.ckpt
+*.weights
+*.pt
+*.onnx
+
+# Ignore datasets
+data/
+dataset/
+*.json
+*.tfrecord
+*.zip
+*.tar.gz
+
+# Ignore output files
+output/
+*.out
+*.log
+*.txt
+*.npy
+*.npz
+*.hdf5
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore virtual environment
+/.venv/
