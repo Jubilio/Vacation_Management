@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Manage Vacations &amp; Compensation</h2>
+    <div class="mb-3">
+        <!-- Navigation for vacations module -->
+        <a href="{% url 'vacation_request' %}" class="btn btn-primary">New Vacation Request</a>
+        <a href="{% url 'vacation_list' %}" class="btn btn-secondary">Vacation List</a>
+        <a href="{% url 'vacation_manage' %}" class="btn btn-info">Vacation Panel</a>
+        <a href="{% url 'compensation_panel' %}" class="btn btn-warning">Compensatory Days Panel</a>
+        <a href="{% url 'compensation_taken_list' %}" class="btn btn-success">Compensation Taken List</a>
+        <a href="{% url 'create_compensatory_days' %}" class="btn btn-dark">Create Compensatory Days</a>
+    </div>
+
+    <!-- Vacation requests table or other vacation management details -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Vacation Accumulated</th>
+                <th>Vacation Taken</th>
+                <th>Vacation Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.accumulated_vacation_days }}</td>
+                <td>{{ employee.vacation_taken_days }}</td>
+                <td>{{ employee.vacation_balance }}</td>
+                <td>
+                    {% if employee.compensatory_days_available %}
+                        <span class="text-warning">
+                          Has {{ employee.compensatory_days_available }} compensatory day(s)
+                        </span>
+                        <a href="{% url 'apply_compensation' employee.id %}" class="btn btn-success btn-sm">Apply Compensation</a>
+                    {% else %}
+                        {% if employee.is_eligible_for_vacation %}
+                            <a href="{% url 'grant_vacation' employee.id %}" class="btn btn-primary btn-sm">Grant Vacation</a>
+                        {% else %}
+                            <span class="text-muted">Not eligible</span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No employees found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

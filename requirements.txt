@@ -1,0 +1,5 @@
+Flask-Mail
+pandas
+openpyxl
+fullcalendar-scheduler
+Flask-Caching

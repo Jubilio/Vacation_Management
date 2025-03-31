@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Vacation Requests</h2>
+    <!-- Navigation links for the vacations module -->
+    <div class="mb-3">
+        <a href="{% url 'vacation_request' %}" class="btn btn-primary">New Vacation Request</a>
+        <a href="{% url 'vacation_manage' %}" class="btn btn-info">Manage Vacations &amp; Compensation</a>
+        <a href="{% url 'create_compensatory_days' %}" class="btn btn-warning">Create Compensatory Days</a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Start Date</th>
+                <th>Duration</th>
+                <th>Return Date</th>
+                <th>Status</th>
+                {% if user.is_staff %}
+                <th>Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for vacation in vacations %}
+            <tr>
+                <td>{{ vacation.employee.name }}</td>
+                <td>{{ vacation.start_date }}</td>
+                <td>{{ vacation.duration }}</td>
+                <td>{{ vacation.return_date }}</td>
+                <td>{{ vacation.get_status_display }}</td>
+                {% if user.is_staff and vacation.status == 'P' %}
+                <td>
+                    <a href="{% url 'vacation_approve' vacation.pk %}" class="btn btn-success btn-sm">Approve</a>
+                    <a href="{% url 'vacation_reject' vacation.pk %}" class="btn btn-danger btn-sm">Reject</a>
+                </td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No vacation requests found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

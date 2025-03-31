@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+<p>Total Employees: {{ total_employees }}</p>
+<p>% Eligible Employees: {{ percent_eligible|floatformat:2 }}%</p>
+
+<canvas id="vacationChart"></canvas>
+<canvas id="compensatoryChart"></canvas>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx1 = document.getElementById('vacationChart').getContext('2d');
+    var vacationChart = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: {{ chart_data.vacation_status.labels|safe }},
+            datasets: [{
+                data: {{ chart_data.vacation_status.data|safe }},
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            }]
+        }
+    });
+
+    var ctx2 = document.getElementById('compensatoryChart').getContext('2d');
+    var compensatoryChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: {{ chart_data.compensatory.labels|safe }},
+            datasets: [{
+                label: 'Compensatory Days',
+                data: {{ chart_data.compensatory.data|safe }},
+                backgroundColor: ['#4BC0C0', '#9966FF'],
+            }]
+        }
+    });
+</script>
+{% endblock %}

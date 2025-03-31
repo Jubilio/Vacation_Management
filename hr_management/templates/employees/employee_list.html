@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Employee List</h2>
+<a href="{% url 'employee_create' %}">Create Employee</a> |
+<a href="{% url 'csv_import' %}">Import CSV</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Contract Date</th>
+            <th>Position</th>
+            <th>Department</th>
+            <th>Accumulated Vacation Days</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for employee in employees %}
+        <tr>
+            <td>{{ employee.name }}</td>
+            <td>{{ employee.contract_date }}</td>
+            <td>{{ employee.position }}</td>
+            <td>{{ employee.department }}</td>
+            <td>{{ employee.accumulated_vacation_days }}</td>
+            <td>
+                <a href="{% url 'employee_update' employee.id %}" class="btn btn-warning btn-sm">Update</a>
+                <a href="{% url 'employee_delete' employee.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

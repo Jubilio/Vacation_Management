@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Compensatory Days Taken</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Compensatory Days Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in used_comp_days %}
+            <tr>
+                <td>{{ record.employee__name }}</td>
+                <td>{{ record.total }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2">No compensatory days have been taken.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Navigation links -->
+    <a href="{% url 'compensation_panel' %}" class="btn btn-secondary">Back to Compensation Panel</a>
+</div>
+{% endblock %}

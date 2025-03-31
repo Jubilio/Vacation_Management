@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <title>HR Management System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            /* Fundo com um leve gradiente para um visual mais suave */
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+        .header {
+            text-align: center;
+            margin: 50px 0;
+        }
+        .logo {
+            max-width: 250px;
+            margin-bottom: 20px;
+        }
+        .login-btn {
+            font-size: 18px;
+            padding: 10px 30px;
+            border-radius: 50px;
+            background-color: #007bff;
+            color: #fff !important;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .login-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+            text-decoration: none;
+        }
+        /* Se desejar remover qualquer elemento de navbar do base, use este estilo */
+        .navbar {
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="{% static 'images/acted.png' %}" alt="Logo da Empresa" class="logo">
+      <h1>Vacation Management System</h1>
+      <p class="lead">Welcome to the human resource management system.</p>
+    </div>
+    <div class="d-flex justify-content-center">
+      <!-- Botão de login destacado -->
+      <a class="btn login-btn" href="/accounts/login/">Login</a>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

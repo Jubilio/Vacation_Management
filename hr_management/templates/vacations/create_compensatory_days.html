@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>Select Calendar Days for Compensation</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="employee">Employee:</label>
+        <select name="employee" id="employee" class="form-control">
+            {% for employee in employees %}
+            <option value="{{ employee.id }}">{{ employee.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="dates">Select Dates:</label>
+        <!-- This input will be converted to a multi-date picker -->
+        <input type="text" name="dates" id="dates" class="form-control" placeholder="Click to select dates" />
+        <small class="form-text text-muted">Dates will be saved as a comma-separated list (YYYY-MM-DD format).</small>
+    </div>
+    <div class="form-group">
+        <label for="note">Justification Note (optional):</label>
+        <textarea name="note" id="note" class="form-control" rows="3" placeholder="Enter any justification note"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="{% url 'vacation_manage' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+<!-- Include jQuery and jQuery UI (for the datepicker) -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<!-- Include MultiDatesPicker plugin (ensure it's available via static files or CDN) -->
+<script src="{% static 'js/multidatespicker.js' %}"></script>
+
+<script>
+  $(function() {
+    // Initialize the multi dates picker on the #dates input field
+    $('#dates').multiDatesPicker({
+      dateFormat: 'yy-mm-dd'
+    });
+  });
+</script>
+{% endblock %}

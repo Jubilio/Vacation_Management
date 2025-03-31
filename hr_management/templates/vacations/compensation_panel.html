@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Compensatory Days Panel</h2>
+    <p>This panel displays all pending compensatory days. HR should apply these days before approving additional vacation requests.</p>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Date</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cd in comp_days %}
+            <tr>
+                <td>{{ cd.employee.name }}</td>
+                <td>{{ cd.date }}</td>
+                <td>{{ cd.note }}</td>
+                <td>
+                    <!-- For example, a button to mark the day as used -->
+                    <a href="{% url 'apply_compensation' cd.employee.id %}" class="btn btn-success btn-sm">Apply Compensation</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No pending compensatory days.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
