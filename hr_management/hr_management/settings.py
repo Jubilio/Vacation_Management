@@ -9,7 +9,7 @@ LOGIN_REDIRECT_URL = '/employees/'
 
 SECRET_KEY = 'your-secret-key'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     # Default Django apps
