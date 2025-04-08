@@ -1,32 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
-    <meta charset="utf-8">
-    <title>Employees Report</title>
+    <meta charset="UTF-8">
+    <title>Relatório de Funcionários</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
 </head>
 <body>
-<h2>Employees Report</h2>
-<table border="1" cellspacing="0" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Contract Date</th>
-            <th>Position</th>
-            <th>Department</th>
-            <th>Accumulated Vacation Days</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for employee in employees %}
-        <tr>
-            <td>{{ employee.name }}</td>
-            <td>{{ employee.contract_date }}</td>
-            <td>{{ employee.position }}</td>
-            <td>{{ employee.department }}</td>
-            <td>{{ employee.accumulated_vacation_days }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <h2>Relatório de Funcionários</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Contract Date</th>
+                <th>Position</th>
+                <th>Department</th>
+                <th>Accumulated Vacation Days</th>
+                <th>On Vacation</th>
+                <th>Compensatory Days Taken</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.contract_date }}</td>
+                <td>{{ employee.position }}</td>
+                <td>{{ employee.department }}</td>
+                <td>{{ employee.accumulated_vacation_days }}</td>
+                <td>{{ employee.is_on_vacation|yesno:"Yes,No" }}</td>
+                <td>{{ employee.comp_days_taken }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>
