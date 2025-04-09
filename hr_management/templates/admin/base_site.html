@@ -1,0 +1,21 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}Admin do Sistema de RH{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'images/acted.png' %}" alt="Logo" style="max-height: 50px; margin-right:10px;">
+        Admin do Sistema de RH
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}
+<!-- Se quiser remover a navbar global, deixe esse bloco vazio -->
+{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+{% endblock %}

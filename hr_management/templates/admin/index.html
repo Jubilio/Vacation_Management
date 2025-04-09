@@ -1,0 +1,39 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Dashboard do Admin</h2>
+    <p class="text-center">Bem-vindo ao Painel Administrativo do Sistema de RH.</p>
+    <!-- Aqui você pode adicionar widgets personalizados, links para outras áreas, gráficos, etc. -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Funcionários</h5>
+                    <p class="card-text">Visualize e gerencie os registros dos funcionários.</p>
+                    <a href="/employees/" class="btn btn-primary">Acessar Funcionários</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Férias</h5>
+                    <p class="card-text">Gerencie pedidos de férias e compensações.</p>
+                    <a href="/vacations/" class="btn btn-success">Acessar Férias</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Relatórios</h5>
+                    <p class="card-text">Gere e visualize relatórios do sistema.</p>
+                    <a href="/reports/" class="btn btn-info">Acessar Relatórios</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
