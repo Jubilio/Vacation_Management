@@ -7,14 +7,14 @@ class Employee(models.Model):
     contract_date = models.DateField()
     position = models.CharField(max_length=255)
     department = models.CharField(max_length=255, blank=True, null=True)
-    # other fields as needed
+    # Outros campos conforme necessário
 
     def __str__(self):
         return self.name
 
     def accumulated_vacation_days(self):
         """
-        Accumulates 2 vacation days per month since contract_date.
+        Acumula 2 dias de férias por mês a partir da data de contratação.
         """
         now = timezone.now().date()
         months = (now.year - self.contract_date.year) * 12 + (now.month - self.contract_date.month)
@@ -22,7 +22,7 @@ class Employee(models.Model):
 
     def vacation_taken_days(self):
         """
-        Sums up the duration of approved vacation requests whose return date has passed.
+        Soma a duração dos pedidos de férias aprovados cujo dia de retorno já passou.
         """
         from vacations.models import VacationRequest
         approved_vacations = VacationRequest.objects.filter(
@@ -34,22 +34,37 @@ class Employee(models.Model):
 
     def vacation_balance(self):
         """
-        Returns the difference between accumulated days and taken days.
+        Retorna a diferença entre os dias acumulados e os dias de férias já usufruídos.
         """
         return self.accumulated_vacation_days() - self.vacation_taken_days()
 
     def is_eligible_for_vacation(self):
         """
-        Eligible if there is a positive vacation balance.
+        Retorna True se o funcionário tiver saldo de férias positivo.
         """
         return self.vacation_balance() > 0
 
     def pending_compensatory_days(self):
         """
-        Returns pending (unused) compensatory day records.
+        Retorna os registros de dias compensatórios que ainda não foram usados.
         """
         from vacations.models import CompensatoryDay
         return CompensatoryDay.objects.filter(employee=self, used=False)
+
+    @property
+    def compensatory_days_available(self):
+        """
+        Retorna a contagem de dias compensatórios pendentes de uso.
+        """
+        return self.pending_compensatory_days().count()
+
+    @property
+    def comp_days_taken(self):
+        """
+        Retorna a quantidade de dias compensatórios já utilizados.
+        """
+        from vacations.models import CompensatoryDay
+        return CompensatoryDay.objects.filter(employee=self, used=True).count()
 
 class AuditLog(models.Model):
     user = models.CharField(max_length=255)
@@ -61,4 +76,3 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - {self.user} - {self.action} on {self.model_name}"
-
