@@ -38,9 +38,9 @@ class VacationRequest(models.Model):
         return current_date
 
     def save(self, *args, **kwargs):
-        if not self.return_date:
-            self.return_date = self.calculate_return_date()
+        self.return_date = self.calculate_return_date()
         super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"Vacation Request for {self.employee.name} starting {self.start_date}"

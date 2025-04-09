@@ -2,6 +2,13 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Vacation Requests</h2>
+    <!-- Navigation links for the vacations module -->
+    <div class="mb-3">
+        <a href="{% url 'vacation_request' %}" class="btn btn-primary">New Vacation Request</a>
+        <a href="{% url 'vacation_manage' %}" class="btn btn-info">Manage Vacations &amp; Compensation</a>
+        <a href="{% url 'create_compensatory_days' %}" class="btn btn-warning">Create Compensatory Days</a>
+    </div>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -23,14 +30,16 @@
                 <td>{{ vacation.duration }}</td>
                 <td>{{ vacation.return_date }}</td>
                 <td>{{ vacation.get_status_display }}</td>
-                {% if user.is_staff and vacation.status == 'A' %}
+                {% if user.is_staff %}
                 <td>
-                    <a href="{% url 'update_vacation_request' vacation.pk %}" class="btn btn-warning btn-sm">Atualizar</a>
-                </td>
-                {% elif user.is_staff %}
-                <td>
-                    <!-- Se não for aprovado, pode exibir outro botão ou uma mensagem -->
-                    <span class="text-muted">--</span>
+                    {% if vacation.status == 'P' %}
+                        <a href="{% url 'vacation_approve' vacation.pk %}" class="btn btn-success btn-sm">Approve</a>
+                        <a href="{% url 'vacation_reject' vacation.pk %}" class="btn btn-danger btn-sm">Reject</a>
+                    {% elif vacation.status == 'A' %}
+                        <a href="{% url 'update_vacation_request' vacation.pk %}" class="btn btn-warning btn-sm">Atualizar</a>
+                    {% else %}
+                        <span class="text-muted">--</span>
+                    {% endif %}
                 </td>
                 {% endif %}
             </tr>
