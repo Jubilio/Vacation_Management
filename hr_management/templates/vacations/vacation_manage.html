@@ -3,7 +3,7 @@
 <div class="container mt-4">
     <h2>Manage Vacations &amp; Compensation</h2>
     <div class="mb-3">
-        <!-- Navigation for vacations module -->
+        <!-- Navegação do módulo de férias -->
         <a href="{% url 'vacation_request' %}" class="btn btn-primary">New Vacation Request</a>
         <a href="{% url 'vacation_list' %}" class="btn btn-secondary">Vacation List</a>
         <a href="{% url 'vacation_manage' %}" class="btn btn-info">Vacation Panel</a>
@@ -12,7 +12,7 @@
         <a href="{% url 'create_compensatory_days' %}" class="btn btn-dark">Create Compensatory Days</a>
     </div>
 
-    <!-- Vacation requests table or other vacation management details -->
+    <!-- Tabela de gerenciamento de férias -->
     <table class="table table-striped">
         <thead>
             <tr>
@@ -31,14 +31,22 @@
                 <td>{{ employee.vacation_taken_days }}</td>
                 <td>{{ employee.vacation_balance }}</td>
                 <td>
-                    {% if employee.compensatory_days_available %}
+                    {# Verifica se há dias compensatórios pendentes #}
+                    {% if employee.compensatory_days_available > 0 %}
                         <span class="text-warning">
                           Has {{ employee.compensatory_days_available }} compensatory day(s)
                         </span>
                         <a href="{% url 'apply_compensation' employee.id %}" class="btn btn-success btn-sm">Apply Compensation</a>
                     {% else %}
+                        {# Se não há dias compensatórios, verifica a elegibilidade para férias #}
                         {% if employee.is_eligible_for_vacation %}
-                            <a href="{% url 'grant_vacation' employee.id %}" class="btn btn-primary btn-sm">Grant Vacation</a>
+                            {# Se há um pedido ativo, mostra o botão de atualizar #}
+                            {% if employee.active_vacation %}
+                                <a href="{% url 'update_vacation_request' employee.active_vacation.pk %}" class="btn btn-warning btn-sm">Atualizar</a>
+                            {% else %}
+                                {# Caso contrário, permite conceder férias #}
+                                <a href="{% url 'grant_vacation' employee.id %}" class="btn btn-primary btn-sm">Grant Vacation</a>
+                            {% endif %}
                         {% else %}
                             <span class="text-muted">Not eligible</span>
                         {% endif %}

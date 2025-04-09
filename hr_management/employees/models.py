@@ -76,3 +76,8 @@ class AuditLog(models.Model):
 
     def __str__(self):
         return f"{self.timestamp} - {self.user} - {self.action} on {self.model_name}"
+
+@property
+def active_vacation(self):
+    from vacations.models import VacationRequest
+    return self.vacationrequest_set.filter(status='A').first()

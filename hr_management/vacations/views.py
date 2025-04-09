@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count
+from .forms import VacationRequestUpdateForm
 
 from employees.models import Employee
 from .models import VacationRequest, CompensatoryDay
@@ -194,3 +195,26 @@ def compensation_taken_list(request):
         'used_comp_days': used_comp_days,
     }
     return render(request, 'vacations/compensation_taken_list.html', context)
+
+@login_required
+@user_passes_test(is_hr)
+def update_vacation_request(request, pk):
+    """
+    Permite atualizar os dados de um pedido de férias após sua concessão,
+    para modificar a data de início ou a duração, caso seja necessário.
+    """
+    vacation = get_object_or_404(VacationRequest, pk=pk)
+    
+    # Se a data de retorno deve ser recalculada automaticamente com base na duração,
+    # ela será recalculada quando salvarmos o objeto (a lógica já presente em save()).
+    
+    if request.method == 'POST':
+        form = VacationRequestUpdateForm(request.POST, instance=vacation)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Detalhes das férias atualizados com sucesso.")
+            return redirect('vacation_manage')
+    else:
+        form = VacationRequestUpdateForm(instance=vacation)
+    
+    return render(request, 'vacations/update_vacation_request.html', {'form': form, 'vacation': vacation})

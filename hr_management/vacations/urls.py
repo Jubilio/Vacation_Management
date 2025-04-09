@@ -13,4 +13,5 @@ urlpatterns = [
     path('compensation/new/', views.create_compensatory_days, name='create_compensatory_days'),
     path('compensation/', views.compensation_panel, name='compensation_panel'),
     path('compensation/taken/', views.compensation_taken_list, name='compensation_taken_list'),
+    path('update/<int:pk>/', views.update_vacation_request, name='update_vacation_request'),
 ]

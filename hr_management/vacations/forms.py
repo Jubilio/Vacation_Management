@@ -17,3 +17,13 @@ class CompensatoryDayForm(forms.ModelForm):
             'date': forms.DateInput(attrs={'type': 'date'}),
             'note': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Justification (if needed)'}),
         }
+
+class VacationRequestUpdateForm(forms.ModelForm):
+    class Meta:
+        model = VacationRequest
+        # Supondo que queremos atualizar a data de início e a duração
+        fields = ['start_date', 'duration']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'duration': forms.NumberInput(attrs={'min': 1}),
+        }
