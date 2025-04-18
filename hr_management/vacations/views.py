@@ -1,15 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.utils import timezone
-from django.utils.dateparse import parse_date
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Count
-from .forms import VacationRequestUpdateForm
+from django.db.models import Count, Q
 
 from employees.models import Employee
 from .models import VacationRequest, CompensatoryDay
-from .forms import VacationRequestForm, CompensatoryDayForm
-
+from .forms import (
+    VacationRequestForm,
+    VacationRequestUpdateForm,
+    CompensatoryDayForm,
+    CompensatoryDayBulkForm,
+)
 def is_hr(user):
     return user.is_staff
 
@@ -122,31 +124,32 @@ def apply_deduction(request, pk):
 @user_passes_test(is_hr)
 def create_compensatory_days(request):
     """
-    Permite que o RH selecione múltiplas datas para dias compensatórios para um funcionário.
+    Formulário único pra escolher o funcionário, várias datas e nota.
     """
-    employees = Employee.objects.all()
-    
     if request.method == 'POST':
-        employee_id = request.POST.get('employee')
-        dates_str = request.POST.get('dates')  # Espera-se uma lista de datas separadas por vírgula (ex.: "2025-04-01,2025-04-03")
-        note = request.POST.get('note', '')
-        employee = get_object_or_404(Employee, pk=employee_id)
-        
-        if dates_str:
-            dates = dates_str.split(',')
-            for date_str in dates:
-                date_str = date_str.strip()
-                if date_str:
-                    date = parse_date(date_str)
-                    if date:
-                        CompensatoryDay.objects.create(employee=employee, date=date, note=note)
-            messages.success(request, "Dias compensatórios criados com sucesso.")
-        else:
-            messages.error(request, "Selecione pelo menos uma data.")
-            
-        return redirect('vacation_manage')
-    
-    return render(request, 'vacations/create_compensatory_days.html', {'employees': employees})
+        form = CompensatoryDayBulkForm(request.POST)
+        if form.is_valid():
+            emp    = form.cleaned_data['employee']
+            dates  = form.cleaned_data['dates'].split(',')
+            note   = form.cleaned_data['note']
+            for d in dates:
+                d = d.strip()
+                if d:
+                    dt = parse_date(d)
+                    if dt:
+                        CompensatoryDay.objects.create(
+                            employee=emp,
+                            date=dt,
+                            note=note
+                        )
+            messages.success(request, "Dias compensatórios registrados com sucesso.")
+            return redirect('vacation_manage')
+    else:
+        form = CompensatoryDayBulkForm()
+
+    return render(request, 'vacations/create_compensatory_days.html', {
+        'form': form
+    })
 
 @login_required
 @user_passes_test(is_hr)
@@ -169,12 +172,35 @@ def apply_compensation(request, employee_id):
 @user_passes_test(is_hr)
 def compensation_panel(request):
     """
-    Exibe um painel com todos os dias compensatórios pendentes (não utilizados).
+    Displays a panel with all employees who have pending compensatory days.
+    Allows HR to apply a specific number of compensatory days per employee.
     """
-    comp_days = CompensatoryDay.objects.filter(used=False).order_by('date')
+    # Handle form submission to apply days
+    if request.method == 'POST':
+        emp_id = request.POST.get('employee_id')
+        days_to_apply = int(request.POST.get('apply_days', 0))
+        employee = get_object_or_404(Employee, pk=emp_id)
+        # Count pending days
+        pending_qs = CompensatoryDay.objects.filter(employee=employee, used=False).order_by('date')
+        total_pending = pending_qs.count()
+        if days_to_apply <= 0 or days_to_apply > total_pending:
+            messages.error(request, f"Invalid number of days. Employee has {total_pending} pending.")
+        else:
+            # Mark the oldest 'days_to_apply' as used
+            to_apply = pending_qs[:days_to_apply]
+            for cd in to_apply:
+                cd.used = True
+                cd.used_date = timezone.now().date()
+                cd.save()
+            messages.success(request, f"Applied {days_to_apply} compensatory day(s) for {employee.name}.")
+        return redirect('compensation_panel')
+
+    # GET: build list of employees with pending counts
+    employees = Employee.objects.annotate(
+        pending_days=Count('compensatoryday', filter=Q(compensatoryday__used=False))
+    ).filter(pending_days__gt=0)
     context = {
-        'comp_days': comp_days,
-        'now': timezone.now().date(),
+        'employees': employees,
     }
     return render(request, 'vacations/compensation_panel.html', context)
 
@@ -218,3 +244,28 @@ def update_vacation_request(request, pk):
         form = VacationRequestUpdateForm(instance=vacation)
     
     return render(request, 'vacations/update_vacation_request.html', {'form': form, 'vacation': vacation})
+
+@login_required
+@user_passes_test(is_hr)
+def create_compensatory_days(request):
+    if request.method == 'POST':
+        form = CompensatoryDayBulkForm(request.POST)
+        if form.is_valid():
+            emp    = form.cleaned_data['employee']
+            dates  = form.cleaned_data['dates'].split(',')    # vem “2025-04-01,2025-04-03,…”
+            note   = form.cleaned_data['note']
+            for d in dates:
+                d = d.strip()
+                if d:
+                    dt = parse_date(d)
+                    if dt:
+                        CompensatoryDay.objects.create(
+                            employee=emp,
+                            date=dt,
+                            note=note
+                        )
+            messages.success(request, "Dias compensatórios registrados com sucesso.")
+            return redirect('vacation_manage')
+    else:
+        form = CompensatoryDayBulkForm()
+    return render(request, 'vacations/create_compensatory_days.html', {'form': form})

@@ -1,4 +1,5 @@
 from django import forms
+from employees.models import Employee
 from .models import VacationRequest, CompensatoryDay
 
 class VacationRequestForm(forms.ModelForm):
@@ -26,4 +27,21 @@ class VacationRequestUpdateForm(forms.ModelForm):
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'duration': forms.NumberInput(attrs={'min': 1}),
-        }
+        }       
+
+class CompensatoryDayBulkForm(forms.Form):
+    employee = forms.ModelChoiceField(
+        queryset=Employee.objects.all(),
+        label="Funcionário"
+    )
+    dates = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'id': 'datepicker',
+            'placeholder': 'Clique e selecione as datas...'
+        }),
+        help_text="Selecione uma ou mais datas"
+    )
+    note = forms.CharField(
+        widget=forms.Textarea(attrs={'rows':3}),
+        required=False
+    )

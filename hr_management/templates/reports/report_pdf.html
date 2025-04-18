@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Relatório de Funcionários (PDF)</title>
+  {# opcional: inclua um css leve para PDF #}
+  <link rel="stylesheet" href="{% static 'css/pdf.css' %}">
+</head>
+<body>
+  <h1 style="text-align:center;">Relatório de Funcionários</h1>
+  <p>
+    Filtros: 
+    {% if name %}Nome contém “{{ name }}”{% endif %}
+    {% if department and name %} / {% endif %}
+    {% if department %}Departamento contém “{{ department }}”{% endif %}
+  </p>
+  <table width="100%" border="1" cellspacing="0" cellpadding="4">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Contratado em</th>
+        <th>Cargo</th>
+        <th>Departamento</th>
+        <th>Férias Acum.</th>
+        <th>Férias Tiradas</th>
+        <th>Férias Pendentes</th>
+        <th>Comp. Usados</th>
+        <th>Comp. Pendentes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.contract_date }}</td>
+        <td>{{ emp.position }}</td>
+        <td>{{ emp.department }}</td>
+        <td>{{ emp.accumulated }}</td>
+        <td>{{ emp.vac_taken }}</td>
+        <td>{{ emp.vac_pending }}</td>
+        <td>{{ emp.comp_used }}</td>
+        <td>{{ emp.comp_pending }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+  <p style="text-align:center;">
+    <!-- botão para baixar em Excel -->
+    <a 
+      href="{% url 'report_excel' %}?name={{ name }}&department={{ department }}" 
+      style="display:inline-block;padding:8px 16px;background:#28a745;color:#fff;text-decoration:none;border-radius:4px;"
+    >
+      
+    </a>
+  </p>
+</body>
+</html>

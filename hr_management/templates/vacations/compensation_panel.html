@@ -1,34 +1,39 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container mt-4">
-    <h2>Compensatory Days Panel</h2>
-    <p>This panel displays all pending compensatory days. HR should apply these days before approving additional vacation requests.</p>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Employee</th>
-                <th>Date</th>
-                <th>Note</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cd in comp_days %}
-            <tr>
-                <td>{{ cd.employee.name }}</td>
-                <td>{{ cd.date }}</td>
-                <td>{{ cd.note }}</td>
-                <td>
-                    <!-- For example, a button to mark the day as used -->
-                    <a href="{% url 'apply_compensation' cd.employee.id %}" class="btn btn-success btn-sm">Apply Compensation</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4">No pending compensatory days.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+  <h2>Painel de Dias Compensatórios</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Funcionário</th>
+        <th>Dias Pendentes</th>
+        <th>Aplicar</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for emp in employees %}
+      <tr>
+        <td>{{ emp.name }}</td>
+        <td>{{ emp.pending_days }}</td>
+        <td>
+          <form method="post" class="form-inline">
+            {% csrf_token %}
+            <input type="hidden" name="employee_id" value="{{ emp.id }}">
+            <input type="number"
+                   name="apply_days"
+                   min="1"
+                   max="{{ emp.pending_days }}"
+                   value="1"
+                   class="form-control form-control-sm mr-2"
+                   style="width: 80px;">
+            <button type="submit" class="btn btn-success btn-sm">Aplicar</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3">Nenhum dia compensatório pendente.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

@@ -1,40 +1,114 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Dashboard</h2>
-<p>Total Employees: {{ total_employees }}</p>
-<p>% Eligible Employees: {{ percent_eligible|floatformat:2 }}%</p>
+<div class="container mt-4">
+  <h2>Dashboard de RH</h2>
 
-<canvas id="vacationChart"></canvas>
-<canvas id="compensatoryChart"></canvas>
+  <!-- KPI Cards -->
+  <div class="row mb-4">
+    <div class="col-md-2">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Total Funcionários</h5>
+          <strong>{{ total_employees }}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Em Férias</h5>
+          <strong>{{ vacations_running }}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Pedidos Pendentes</h5>
+          <strong>{{ pending_requests }}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>% Elegíveis</h5>
+          <strong>{{ percent_eligible|floatformat:1 }}%</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Comp. Usados</h5>
+          <strong>{{ comp_used }}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5>Comp. Pendentes</h5>
+          <strong>{{ comp_pending }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <!-- Gráficos -->
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header bg-light">
+          Status de Pedidos
+        </div>
+        <div class="card-body">
+          <canvas id="vacationChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-4">
+        <div class="card-header bg-light">
+          Dias Compensatórios
+        </div>
+        <div class="card-body">
+          <canvas id="compChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx1 = document.getElementById('vacationChart').getContext('2d');
-    var vacationChart = new Chart(ctx1, {
-        type: 'pie',
-        data: {
-            labels: {{ chart_data.vacation_status.labels|safe }},
-            datasets: [{
-                data: {{ chart_data.vacation_status.data|safe }},
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-            }]
-        }
-    });
+  // Gráfico de Status de Férias
+  var ctx1 = document.getElementById('vacationChart').getContext('2d');
+  new Chart(ctx1, {
+    type: 'pie',
+    data: {
+      labels: {{ vac_labels_json|safe }},
+      datasets: [{
+        data: {{ vac_data_json|safe }},
+        backgroundColor: ['#ffc107','#28a745','#dc3545'],
+      }]
+    }
+  });
 
-    var ctx2 = document.getElementById('compensatoryChart').getContext('2d');
-    var compensatoryChart = new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: {{ chart_data.compensatory.labels|safe }},
-            datasets: [{
-                label: 'Compensatory Days',
-                data: {{ chart_data.compensatory.data|safe }},
-                backgroundColor: ['#4BC0C0', '#9966FF'],
-            }]
-        }
-    });
+  // Gráfico de Dias Compensatórios
+  var ctx2 = document.getElementById('compChart').getContext('2d');
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: {{ comp_labels_json|safe }},
+      datasets: [{
+        label: 'Dias Compensatórios',
+        data: {{ comp_data_json|safe }},
+        backgroundColor: ['#17a2b8','#6f42c1'],
+      }]
+    }
+  });
 </script>
 {% endblock %}

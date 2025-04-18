@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 
+
 class Employee(models.Model):
     name = models.CharField(max_length=255)
     contract_date = models.DateField()
